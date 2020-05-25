@@ -13,6 +13,5 @@ public class AssetService {
 
     public void getAssets(String userId, Pageable page) {
         System.out.println(userId);
-
     }
 }

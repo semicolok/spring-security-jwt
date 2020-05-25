@@ -21,14 +21,11 @@ public class AssetController {
 
     @GetMapping("/assets")
     public ResponseEntity<?> hello(Authentication authentication, Pageable page) {
-        Map<String, String> map = Maps.newHashMap();
-        map.put("result", "world");
-
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
         assetService.getAssets(userPrincipal.getUserId(), page);
 
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
