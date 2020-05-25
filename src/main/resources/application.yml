@@ -1,0 +1,40 @@
+logging:
+  level:
+    root: DEBUG
+    org.springframework.core: INFO
+    org.springframework.context: INFO
+    org.springframework.beans.factory.support: INFO
+    org.springframework.boot.autoconfigure.logging: INFO
+    org.springframework.boot.test.context: INFO
+    org.springframework.jdbc.datasource.init: INFO
+    org.apache.tomcat.util: INFO
+    org.apache.catalina: INFO
+    sun.rmi: INFO
+
+client:
+  auth:
+    beluga:
+      base-url: http://localhost:8080
+      connect-timeout-seconds: 2
+      read-timeout-seconds: 2
+      write-timeout-seconds: 2
+  asset:
+    beluga:
+      base-url: http://localhost:8080
+      connect-timeout-seconds: 2
+      read-timeout-seconds: 2
+      write-timeout-seconds: 2
+  group:
+    beluga:
+      base-url: http://localhost:8080
+      connect-timeout-seconds: 2
+      read-timeout-seconds: 2
+      write-timeout-seconds: 2
+
+
+jwt:
+  properties:
+    auth-header: Authorization
+    auth-prefix: Bearer
+    secret:
+    expiration-seconds: 3600
