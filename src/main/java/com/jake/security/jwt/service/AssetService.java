@@ -12,6 +12,7 @@ public class AssetService {
     private final BelugaAssetClient belugaAssetClient;
 
     public void getAssets(String userId, Pageable page) {
+        System.out.println(userId);
 
     }
 }

@@ -1,6 +1,7 @@
 package com.jake.security.jwt.controller;
 
 import com.google.common.collect.Maps;
+import com.jake.security.jwt.configuration.filter.UserPrincipal;
 import com.jake.security.jwt.service.AssetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -23,9 +24,9 @@ public class AssetController {
         Map<String, String> map = Maps.newHashMap();
         map.put("result", "world");
 
-        String userId = (String)authentication.getPrincipal();
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
-        assetService.getAssets(userId, page);
+        assetService.getAssets(userPrincipal.getUserId(), page);
 
         return new ResponseEntity<>(map, HttpStatus.OK);
     }

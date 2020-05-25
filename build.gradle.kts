@@ -37,9 +37,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.8.1")
     implementation("com.squareup.retrofit2:converter-jackson:2.8.1")
 
-    implementation("io.jsonwebtoken:jjwt-api:0.11.1")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.1")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.1")
+    implementation("com.auth0:java-jwt:3.10.3")
 
     implementation("org.projectlombok:lombok")
 

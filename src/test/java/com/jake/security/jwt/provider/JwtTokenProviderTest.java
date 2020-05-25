@@ -1,52 +1,48 @@
 package com.jake.security.jwt.provider;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Encoders;
-import io.jsonwebtoken.security.Keys;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.JWTVerifier;
 import org.junit.jupiter.api.Test;
 
-import javax.crypto.SecretKey;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.text.ParseException;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class JwtTokenProviderTest {
 
+    private static final String ANY_SECRET = "secret";
+    public static final String ANY_SUBJECT = "testUserId";
+
     @Test
-    public void test() {
-        ZonedDateTime utc = ZonedDateTime.now(ZoneOffset.UTC);
-        System.out.println(Instant.now());
-        System.out.println(Date.from(Instant.now()));
+    public void testGenerateToken() throws ParseException {
+        Algorithm algorithm = Algorithm.HMAC256(ANY_SECRET);
 
-        String base64EncodedSecretKey = Encoders.BASE64.encode("hhjqwerqwerwqerqwerwqewewerwerwerkk".getBytes());
-        SecretKey secretKey = Keys.hmacShaKeyFor(base64EncodedSecretKey.getBytes());
-
-        String token = Jwts.builder()
-//                .setClaims(claims)
-                .setSubject("testUserId")
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 5 * 60 * 60 * 1000))
-                .signWith(SignatureAlgorithm.HS256, base64EncodedSecretKey)
-//                .signWith(secretKey, SignatureAlgorithm.HS256)
-//                .signWith(secretKey)
-                .compact();
+        String token = JWT.create()
+                .withSubject(ANY_SUBJECT)
+                .withClaim("some", "body")
+                .withIssuedAt(new Date(System.currentTimeMillis()))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 600 * 1000))
+                .sign(algorithm);
 
         System.out.println(token);
+    }
 
+    @Test
+    public void testDecodeToken() {
+        Algorithm algorithm = Algorithm.HMAC256(ANY_SECRET);
 
-        Jws<Claims> claimsJws = Jwts.parserBuilder()
-                .setSigningKey(base64EncodedSecretKey)
-//                .setSigningKey(secretKey)
-//                .build().parseClaimsJws(token);
-                .build().parseClaimsJws("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.P0YsZThHpj-RPQk91uE0DUJq0rUZJ-TZTuwto4iGDsg");
+        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0VXNlcklkIiwic29tZSI6ImJvZHkiLCJleHAiOjE1OTAzODUyNjEsImlhdCI6MTU5MDM4NDY2MX0.XB_-_8rAyhuNUSv1-tYifK3f9gmZzfXKPw5dZiruweQ";
+        JWTVerifier verifier = JWT.require(algorithm).build();
 
-        System.out.println(claimsJws.toString());
-        System.out.println(claimsJws.getBody().toString());
+        DecodedJWT jwt = verifier.verify(token);
+
+        System.out.println(jwt);
+
+        System.out.println(jwt.getSubject());
+        System.out.println(jwt.getPayload());
+        System.out.println(jwt.getClaim("some").asString());
     }
 }
