@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Encoders;
-import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,13 +22,13 @@ public class JwtTokenProvider {
 
     private final String authHeader;
     private final String authPrefix;
-    private final Key signingKey;
+    private final String base64EncodedSecretKey;
     private final long expirationSeconds;
 
     public JwtTokenProvider(JwtProperties jwtProperties) {
         this.authHeader = jwtProperties.getAuthHeader();
         this.authPrefix = jwtProperties.getAuthPrefix();
-        this.signingKey = Keys.hmacShaKeyFor(Encoders.BASE64.encode(jwtProperties.getSecret().getBytes()).getBytes());
+        this.base64EncodedSecretKey = Encoders.BASE64.encode(jwtProperties.getSecret().getBytes());
         this.expirationSeconds = jwtProperties.getExpirationSeconds();
     }
 
@@ -43,7 +41,7 @@ public class JwtTokenProvider {
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationSeconds * 1000))
-                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .signWith(SignatureAlgorithm.HS256, base64EncodedSecretKey)
                 .compact();
     }
 
@@ -60,7 +58,7 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token) {
         try {
             final var claimsJws = Jwts.parserBuilder()
-                    .setSigningKey(signingKey)
+                    .setSigningKey(base64EncodedSecretKey)
                     .build().parseClaimsJws(token);
 
             final var claims = claimsJws.getBody();

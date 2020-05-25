@@ -36,5 +36,5 @@ jwt:
   properties:
     auth-header: Authorization
     auth-prefix: Bearer
-    secret:
+    secret: wr32A5r2ubkwKwXYop8pw7J8hv6
     expiration-seconds: 3600
